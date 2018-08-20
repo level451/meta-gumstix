@@ -24,3 +24,4 @@ revision: HEAD
 Layer maintainer: 
 Jay Zhao <jay.zhao@gumstix.com> for Gumstix, Inc.
 Sicong Jia <sicong.jia@gumstix.com> for Gumstix, Inc.
+Todd
