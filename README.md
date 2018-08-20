@@ -18,10 +18,11 @@ and feature-requests/issues can be raised against the top-level
 This layer depends on:
 
 URI: git://git.yoctoproject.org/poky.git
-branch: rocko
+branch: test
 revision: HEAD
 
 Layer maintainer: 
 Jay Zhao <jay.zhao@gumstix.com> for Gumstix, Inc.
 Sicong Jia <sicong.jia@gumstix.com> for Gumstix, Inc.
 Todd
+Steve
