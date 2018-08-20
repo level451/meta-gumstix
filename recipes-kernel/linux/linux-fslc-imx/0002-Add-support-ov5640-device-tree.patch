@@ -33,7 +33,7 @@ index 24fe0c6..b6d8142 100644
  };
  
  &usbphy1 {
-@@ -517,6 +541,21 @@
+@@ -517,12 +541,27 @@
      pinctrl-names = "default";
      pinctrl-0 = <&i2c3_default>;
      clock-frequency = <400000>;
@@ -55,6 +55,13 @@ index 24fe0c6..b6d8142 100644
  };
  
  // ethernet device
+ 
+ &fec {
+-    status = "okay";
++    status = "disable"; //disable this because its using the pin mux for the camera
+     pinctrl-names = "default";
+     pinctrl-0 = <&fec_default>;
+     phy-reset-gpios = <&gpio1 26 0>;
 @@ -737,6 +776,7 @@
          i2c3_default: i2c3grp {
              fsl,pins = <

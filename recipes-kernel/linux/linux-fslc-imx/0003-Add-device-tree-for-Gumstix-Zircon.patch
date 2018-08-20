@@ -1,58 +1,20 @@
-From dda049aaab4bbe2fa24174b77a991b87438b6c94 Mon Sep 17 00:00:00 2001
-From: "Andrew C. Smith" <acsmith@gumstix.com>
-Date: Tue, 8 Aug 2017 12:57:05 -0400
-Subject: [PATCH] Changes made to support the Gumstix NXP SCM board.
+From bf1551581dc11bfad33ffb2f85a5f94c5e868abf Mon Sep 17 00:00:00 2001
+From: Sicong Jia <sicong.jia@gumstix.com>
+Date: Thu, 22 Mar 2018 15:15:43 -0700
+Subject: [PATCH] Add device tree for Gumstix Zircon
 
+Signed-off-by: Sicong Jia <sicong.jia@gumstix.com>
 ---
- .../bindings/sound/fsl,imx-audio-tlv320aic3x.txt   |  27 ++
- arch/arm/boot/dts/imx6dqscm-1gb-gumstix.dts        | 790 ++++++++++++++++++++++++++++++++
- sound/soc/fsl/Kconfig                              |  13 +
- sound/soc/fsl/Makefile                             |   2 +
- sound/soc/fsl/imx-tlv320aic3x.c                    | 186 ++++++++++++
- 5 files changed, 539 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/fsl,imx-audio-tlv320aic3x.txt
- create mode 100644 arch/arm/boot/dts/imx6dqscm-1gb-gumstix.dts
- create mode 100644 sound/soc/fsl/imx-tlv320aic3x.c
+ arch/arm/boot/dts/imx6dqscm-1gb-zircon.dts | 924 +++++++++++++++++++++++++++++
+ 1 file changed, 924 insertions(+)
+ create mode 100644 arch/arm/boot/dts/imx6dqscm-1gb-zircon.dts
 
-diff --git a/Documentation/devicetree/bindings/sound/fsl,imx-audio-tlv320aic3x.txt b/Documentation/devicetree/bindings/sound/fsl,imx-audio-tlv320aic3x.txt
+diff --git a/arch/arm/boot/dts/imx6dqscm-1gb-zircon.dts b/arch/arm/boot/dts/imx6dqscm-1gb-zircon.dts
 new file mode 100644
-index 0000000..9e6c4443
+index 0000000..c568297
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/fsl,imx-audio-tlv320aic3x.txt
-@@ -0,0 +1,27 @@
-+Audio complex for i.MX6 boards with tlv320aic3x audio codecs.
-+
-+Required properties:
-+- compatible : "fsl,imx-audio-tlv320aic3x"
-+- model : The user-visible name of this sound complex.
-+- ssi-controller : The phandle of the SSI controller.
-+- mux-int-port : The internal port of the i.MX audio muxer (AUDMUX).
-+- mux-ext-port : The external port of the i.MX audio muxer.
-+
-+Note: The AUDMUX port numbering should start at 1, which is consistent with
-+hardware manual.
-+
-+Example:
-+
-+sound {
-+	compatible = "fsl,imx-audio-tlv320aic3x";
-+	model = "imx6q-phyflex-tlv320aic3007";
-+	ssi-controller = <&ssi2>;
-+	audio-codec = <&codec>;
-+	audio-routing =
-+		"Line Out", "LLOUT",
-+		"Line Out", "RLOUT",
-+		"Headphone Jack", "HPLOUT",
-+		"Headphone Jack", "HPROUT";
-+	mux-int-port = <2>;
-+	mux-ext-port = <5>;
-+};
-diff --git a/arch/arm/boot/dts/imx6dqscm-1gb-gumstix.dts b/arch/arm/boot/dts/imx6dqscm-1gb-gumstix.dts
-new file mode 100644
-index 0000000..dd8fb6a
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6dqscm-1gb-gumstix.dts
-@@ -0,0 +1,790 @@
++++ b/arch/arm/boot/dts/imx6dqscm-1gb-zircon.dts
+@@ -0,0 +1,924 @@
 +/*
 +* Copyright (C) 2017 Gumstix, Inc.  All Rights Reserved - https://www.gumstix.com/
 +* Product of the Geppetto Device Tree Service
@@ -223,10 +185,34 @@ index 0000000..dd8fb6a
 +
 +    mmc2_pwrseq: mmc2_pwrseq_root {
 +        status = "okay";
-+        reset-gpios = <&gpio4 20 GPIO_ACTIVE_LOW>,
-+            <&gpio4 17 GPIO_ACTIVE_LOW>;
++        reset-gpios = <&gpio4 5 GPIO_ACTIVE_LOW>,
++            <&gpio7 12 GPIO_ACTIVE_LOW>;
 +        compatible = "mmc-pwrseq-simple";
 +    };
++
++	v4l2_cap_0 {
++		compatible = "fsl,imx6q-v4l2-capture";
++		ipu_id = <0>;
++		csi_id = <0>;
++		mclk_source = <0>;
++		status = "okay";
++	};
++
++	v4l2_cap_1 {
++		compatible = "fsl,imx6q-v4l2-capture";
++		ipu_id = <0>;
++		csi_id = <1>;
++		mclk_source = <0>;
++		status = "okay";
++	};
++};
++
++&mipi_csi {
++	status = "okay";
++	ipu_id = <0>;
++	csi_id = <1>;
++	v_channel = <0>;
++	lanes = <2>;
 +};
 +
 +&usbphy1 {
@@ -255,27 +241,16 @@ index 0000000..dd8fb6a
 +    status = "okay";
 +};
 +
-+&ecspi1 {
-+    fsl,spi-num-chipselects = <1>;
-+    cs-gpios = <&gpio2 30 0>;
-+    pinctrl-names = "default";
-+    pinctrl-0 = <&pinctrl_ecspi1>;
-+    status = "okay";
-+
-+    flash: m25p80@0 {
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        compatible = "micron,n25q128a13";
-+        spi-max-frequency = <20000000>;
-+        reg = <0>;
-+    };
-+};
-+
 +&i2c2 {
 +    clock-frequency = <100000>;
 +    pinctrl-names = "default";
 +    pinctrl-0 = <&pinctrl_i2c2>;
 +    status = "okay";
++
++    hdmi: edid@50 {
++        compatible = "fsl,imx6-hdmi-i2c";
++        reg = <0x50>;
++    };
 +
 +    pmic: pfuze100@08 {
 +        compatible = "fsl,pfuze100";
@@ -364,8 +339,8 @@ index 0000000..dd8fb6a
 +            };
 +
 +            vgen4_reg: vgen4 {
-+                regulator-min-microvolt = <1800000>;
-+                regulator-max-microvolt = <2500000>;
++                regulator-min-microvolt = <3300000>;
++                regulator-max-microvolt = <3300000>;
 +                regulator-always-on;
 +            };
 +
@@ -376,8 +351,8 @@ index 0000000..dd8fb6a
 +            };
 +
 +            vgen6_reg: vgen6 {
-+                regulator-min-microvolt = <1800000>;
-+                regulator-max-microvolt = <3150000>;
++                regulator-min-microvolt = <2800000>;
++                regulator-max-microvolt = <2800000>;
 +                regulator-always-on;
 +            };
 +        };
@@ -409,13 +384,6 @@ index 0000000..dd8fb6a
 +
 +&usbh2 {
 +    status = "okay";
-+};
-+
-+&i2c2 {
-+    hdmi: edid@50 {
-+        compatible = "fsl,imx6-hdmi-i2c";
-+        reg = <0x50>;
-+    };
 +};
 +
 +&hdmi_audio {
@@ -493,32 +461,6 @@ index 0000000..dd8fb6a
 +    };
 +};
 +
-+&iomuxc {
-+    imx6qdl-sabresd {
-+        pinctrl_hdmi_cec: hdmicecgrp {
-+            fsl,pins = <
-+                MX6QDL_PAD_KEY_ROW2__HDMI_TX_CEC_LINE 0x108b0
-+            >;
-+        };
-+    };
-+};
-+
-+&ecspi1 {
-+    fsl,spi-num-chipselects = <1>;
-+    cs-gpios = <&gpio2 30 0>;
-+    pinctrl-names = "default";
-+    pinctrl-0 = <&pinctrl_ecspi1>;
-+    status = "okay";
-+
-+    flash: m25p80@0 {
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        compatible = "micron,n25q128a13";
-+        spi-max-frequency = <20000000>;
-+        reg = <0>;
-+    };
-+};
-+
 +&usdhc2 {
 +    pinctrl-names = "default";
 +    pinctrl-0 = <&pinctrl_usdhc2>;
@@ -572,12 +514,27 @@ index 0000000..dd8fb6a
 +    pinctrl-names = "default";
 +    pinctrl-0 = <&i2c3_default>;
 +    clock-frequency = <400000>;
++
++    ov564x_mipi: ov564x_mipi@3c {
++	compatible = "ovti,ov564x_mipi";
++	reg = <0x3c>;
++	clocks = <&clks 201>;
++	clock-names = "csi_mclk";
++	pwn-gpios = <&gpio1 29 1>;   /* active low */
++	rst-gpios = <&gpio1 30 0>;   /* active high */
++	csi_id = <1>;
++	mclk = <24000000>;
++	mclk_source = <0>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&ov5640_default>;
++	status = "okay";
++    };
 +};
 +
 +// ethernet device
 +
 +&fec {
-+    status = "okay";
++    status = "disable"; //disable this because its using the pin mux for the camera
 +    pinctrl-names = "default";
 +    pinctrl-0 = <&fec_default>;
 +    phy-reset-gpios = <&gpio1 26 0>;
@@ -591,10 +548,15 @@ index 0000000..dd8fb6a
 +// imx6-hdmi device
 +
 +&hdmi_cec {
++    status = "disabled";
++};
++
++// pcie bus
++&pcie {
 +    status = "okay";
 +    pinctrl-names = "default";
-+    pinctrl-0 = <&hdmi_default>;
-+    type = "imx6-hdmi";
++    pinctrl-0 = <&pcie_default>;
++    reset-gpio = <&gpio3 18 GPIO_ACTIVE_LOW>;
 +};
 +
 +// uart1 device
@@ -604,6 +566,16 @@ index 0000000..dd8fb6a
 +    pinctrl-names = "default";
 +    pinctrl-0 = <&uart1_default>;
 +    type = "uart";
++};
++
++&uart2 {
++    status = "okay";
++    pinctrl-names = "default";
++    pinctrl-0 = <&uart2_default>;
++    type = "sdmmc",
++        "uart";
++    /delete-property/fsl,dte-mode;
++    fsl,uart-has-rtscts;
 +};
 +
 +// uart5 device
@@ -623,7 +595,7 @@ index 0000000..dd8fb6a
 +    status = "okay";
 +    pinctrl-names = "default";
 +    pinctrl-0 = <&usdhc1_default>;
-+    mmc-pwrseq = <&mmc2_pwrseq>;
++    mc-pwrseq = <&mmc2_pwrseq>;
 +    #address-cells = <1>;
 +    type = "sdmmc",
 +        "uart";
@@ -640,9 +612,24 @@ index 0000000..dd8fb6a
 +        compatible = "ti,wl1835";
 +        reg = <2>;
 +    
-+        interrupt-parent = <&gpio5>;
-+        interrupts =<10 IRQ_TYPE_EDGE_RISING>;
++        interrupt-parent = <&gpio1>;
++        interrupts =<25 IRQ_TYPE_EDGE_RISING>;
 +    };
++};
++
++&usdhc3 {
++        status = "disabled";
++};
++
++&usdhc4 {
++        label = "eMMC";
++        pinctrl-names = "default";
++        pinctrl-0 = <&pinctrl_usdhc4>;
++        vmmc-supply = <&sw2_reg>;
++        bus-width = <8>;
++        keep-power-in-suspend;
++        non-removable;
++        status = "okay";
 +};
 +
 +// usb device
@@ -657,21 +644,70 @@ index 0000000..dd8fb6a
 +    type = "uart";
 +};
 +
++// uart3 device
++
++&uart4 {
++    status = "okay";
++    pinctrl-names = "default";
++    pinctrl-0 = <&uart4_default>;
++    type = "uart";
++};
++
 +// spi_buses device
++
++&ecspi1 {
++    fsl,spi-num-chipselects = <2>;
++    cs-gpios = <&gpio5 17 0 &gpio5 9 0>;
++    pinctrl-names = "default";
++    pinctrl-0 = <&pinctrl_ecspi1>;
++    status = "okay";
++
++    spidev1: spidev1@0 {
++        status = "okay";
++        compatible = "linux,spidev";
++        type = "spi";
++        reg = <0>;
++    };
++
++/* Pins shared with PCIE_RST and POWER
++
++    flash: m25p80@0 {
++        #address-cells = <1>;
++        #size-cells = <1>;
++        compatible = "micron,n25q128a13";
++        spi-max-frequency = <20000000>;
++        reg = <0>;
++    };
++*/
++};
++
++&ecspi2 {
++    status = "okay";
++    pinctrl-names = "default";
++    pinctrl-0 = <&ecspi2_default>;
++    fsl,spi-num-chipselects = <1>;
++    cs-gpios = <&gpio5 12 0>;
++    
++    spidev2: spidev2@0 {
++        status = "okay";
++        compatible = "linux,spidev";
++        type = "spi";
++        reg = <0>;
++    };
++};
 +
 +&ecspi3 {
 +    status = "okay";
 +    pinctrl-names = "default";
 +    pinctrl-0 = <&ecspi3_default>;
++    fsl,spi-num-chipselects = <4>;
++    cs-gpios = <&gpio4 24 0 &gpio4 25 0 &gpio4 26 0 &gpio4 27 0>;
 +    
-+    spidev: spidev@0 {
++    spidev3: spidev3@0 {
 +        status = "okay";
 +        compatible = "linux,spidev";
 +        type = "spi";
 +        reg = <0>;
-+    
-+        interrupt-parent = <&gpio4>;
-+        interrupts =<19 0>;
 +    };
 +};
 +
@@ -695,9 +731,11 @@ index 0000000..dd8fb6a
 +
 +        pinctrl_ecspi1: ecspi1grp {
 +            fsl,pins = <
-+                MX6QDL_PAD_EIM_D17__ECSPI1_MISO 0x100b1
-+                MX6QDL_PAD_EIM_D18__ECSPI1_MOSI 0x100b1
-+                MX6QDL_PAD_EIM_D16__ECSPI1_SCLK 0x100b1
++                MX6QDL_PAD_DISP0_DAT22__ECSPI1_MISO 0x100b1
++                MX6QDL_PAD_DISP0_DAT21__ECSPI1_MOSI 0x100b1
++                MX6QDL_PAD_DISP0_DAT20__ECSPI1_SCLK 0x100b1
++		MX6QDL_PAD_DISP0_DAT23__GPIO5_IO17  0x100b1
++		MX6QDL_PAD_DISP0_DAT15__GPIO5_IO09  0x100b1
 +            >;
 +        };
 +
@@ -723,6 +761,7 @@ index 0000000..dd8fb6a
 +                MX6QDL_PAD_SD2_DAT1__SD2_DATA1        0x17059
 +                MX6QDL_PAD_SD2_DAT2__SD2_DATA2        0x17059
 +                MX6QDL_PAD_SD2_DAT3__SD2_DATA3        0x17059
++		MX6QDL_PAD_KEY_ROW1__SD2_VSELECT      0x17059
 +            >;
 +        };
 +    };
@@ -758,14 +797,24 @@ index 0000000..dd8fb6a
 +            >;
 +        };
 +
++        ecspi2_default: ecspi2grp {
++            fsl,pins = <
++		MX6QDL_PAD_EIM_CS0__ECSPI2_SCLK PIN_INPUT_PULLUP
++		MX6QDL_PAD_EIM_CS1__ECSPI2_MOSI PIN_INPUT_PULLUP
++		MX6QDL_PAD_EIM_OE__ECSPI2_MISO PIN_INPUT_PULLUP
++		MX6QDL_PAD_DISP0_DAT18__GPIO5_IO12 PIN_INPUT_PULLUP
++            >;
++        };
++
 +        ecspi3_default: ecspi3grp {
 +            fsl,pins = <
 +                MX6QDL_PAD_DISP0_DAT0__ECSPI3_SCLK PIN_INPUT_PULLUP /* disp0_dat0.ecspi3_sclk */
-+                MX6QDL_PAD_DISP0_DAT3__ECSPI3_SS0 PIN_INPUT /* disp0_dat3.ecspi3_ss0 */
-+                MX6QDL_PAD_DISP0_DAT4__ECSPI3_SS1 PIN_INPUT /* disp0_dat4.ecspi3_ss1 */
-+                MX6QDL_PAD_DISP0_DAT2__ECSPI3_MISO PIN_INPUT_PULLUP /* disp0_dat2.ecspi3_miso */
 +                MX6QDL_PAD_DISP0_DAT1__ECSPI3_MOSI PIN_INPUT_PULLUP /* disp0_dat1.ecspi3_mosi */
-+                MX6QDL_PAD_DI0_PIN3__GPIO4_IO19 PIN_INPUT /* di0_pin3.gpio4_io19 */
++                MX6QDL_PAD_DISP0_DAT2__ECSPI3_MISO PIN_INPUT_PULLUP /* disp0_dat2.ecspi3_miso */
++                MX6QDL_PAD_DISP0_DAT3__GPIO4_IO24 PIN_INPUT 
++                MX6QDL_PAD_DISP0_DAT4__GPIO4_IO25 PIN_INPUT
++		MX6QDL_PAD_DISP0_DAT5__GPIO4_IO26 PIN_INPUT
++		MX6QDL_PAD_DISP0_DAT6__GPIO4_IO27 PIN_INPUT
 +            >;
 +        };
 +
@@ -783,22 +832,42 @@ index 0000000..dd8fb6a
 +                MX6QDL_PAD_SD1_DAT1__SD1_DATA1 PIN_INPUT /* sd1_dat1.sd1_data1 */
 +                MX6QDL_PAD_SD1_DAT2__SD1_DATA2 PIN_INPUT /* sd1_dat2.sd1_data2 */
 +                MX6QDL_PAD_SD1_DAT3__SD1_DATA3 PIN_INPUT /* sd1_dat3.sd1_data3 */
-+                MX6QDL_PAD_DISP0_DAT16__GPIO5_IO10 PIN_INPUT /* disp0_dat16.gpio5_io10 */
-+                MX6QDL_PAD_DI0_PIN4__GPIO4_IO20 PIN_INPUT /* di0_pin4.gpio4_io20 */
-+                MX6QDL_PAD_DI0_PIN15__GPIO4_IO17 PIN_INPUT /* di0_pin15.gpio4_io17 */
++                MX6QDL_PAD_GPIO_19__GPIO4_IO05 PIN_INPUT /* WL EN */ 
++                MX6QDL_PAD_GPIO_17__GPIO7_IO12 PIN_INPUT /* BT_EN */
++                MX6QDL_PAD_ENET_CRS_DV__GPIO1_IO25 PIN_INPUT /* IRQ */
++                MX6QDL_PAD_GPIO_8__XTALOSC_REF_CLK_32K PIN_INPUT_PULLUP /* 32K */
 +            >;
 +        };
++
++	        pinctrl_usdhc4: usdhc4grp {
++                        fsl,pins = <
++                                MX6QDL_PAD_SD4_CMD__SD4_CMD             0x17069
++                                MX6QDL_PAD_SD4_CLK__SD4_CLK             0x10069
++                                MX6QDL_PAD_SD4_DAT0__SD4_DATA0          0x17069
++                                MX6QDL_PAD_SD4_DAT1__SD4_DATA1          0x17069
++                                MX6QDL_PAD_SD4_DAT2__SD4_DATA2          0x17069
++                                MX6QDL_PAD_SD4_DAT3__SD4_DATA3          0x17069
++                                MX6QDL_PAD_SD4_DAT4__SD4_DATA4          0x17069
++                                MX6QDL_PAD_SD4_DAT5__SD4_DATA5          0x17069
++                                MX6QDL_PAD_SD4_DAT6__SD4_DATA6          0x17069
++                                MX6QDL_PAD_SD4_DAT7__SD4_DATA7          0x17069
++                                MX6QDL_PAD_NANDF_ALE__NAND_ALE          0x17069
++                        >;
++                };
 +
 +        i2c3_default: i2c3grp {
 +            fsl,pins = <
 +                MX6QDL_PAD_GPIO_5__I2C3_SCL PIN_OUTPUT_PULLUP /* gpio_5.i2c3_scl */
++                MX6QDL_PAD_GPIO_6__I2C3_SDA PIN_OUTPUT_PULLUP /* gpio_6.i2c3_sda */
 +            >;
 +        };
 +
-+        hdmi_default: hdmigrp {
++        uart2_default: uart2grp {
 +            fsl,pins = <
-+                MX6QDL_PAD_KEY_COL3__HDMI_TX_DDC_SCL PIN_INPUT /* key_col3.hdmi_tx_ddc_scl */
-+                MX6QDL_PAD_KEY_ROW3__HDMI_TX_DDC_SDA PIN_INPUT /* key_row3.hdmi_tx_ddc_sda */
++                MX6QDL_PAD_SD3_CMD__UART2_CTS_B PIN_INPUT_PULLUP 
++                MX6QDL_PAD_SD3_CLK__UART2_RTS_B PIN_INPUT_PULLUP 
++                MX6QDL_PAD_SD3_DAT4__UART2_RX_DATA PIN_INPUT_PULLUP 
++               	MX6QDL_PAD_SD3_DAT5__UART2_TX_DATA PIN_INPUT_PULLUP 
 +            >;
 +        };
 +
@@ -806,7 +875,7 @@ index 0000000..dd8fb6a
 +            fsl,pins = <
 +                MX6QDL_PAD_KEY_ROW4__UART5_CTS_B PIN_INPUT_PULLUP /* key_row4.uart5_cts_b */
 +                MX6QDL_PAD_KEY_COL4__UART5_RTS_B PIN_INPUT_PULLUP /* key_col4.uart5_rts_b */
-+                MX6QDL_PAD_KEY_ROW1__UART5_RX_DATA PIN_INPUT_PULLUP /* key_row1.uart5_rx_data */
++                MX6QDL_PAD_CSI0_DAT15__UART5_RX_DATA PIN_INPUT_PULLUP 
 +                MX6QDL_PAD_KEY_COL1__UART5_TX_DATA PIN_INPUT_PULLUP /* key_col1.uart5_tx_data */
 +            >;
 +        };
@@ -822,13 +891,33 @@ index 0000000..dd8fb6a
 +
 +        uart3_default: uart3grp {
 +            fsl,pins = <
++		MX6QDL_PAD_SD3_DAT3__UART3_CTS_B PIN_INPUT_PULLUP
++		MX6QDL_PAD_SD3_RST__UART3_RTS_B PIN_INPUT_PULLUP
 +                MX6QDL_PAD_EIM_D25__UART3_RX_DATA PIN_INPUT_PULLUP /* eim_d25.uart3_rx_data */
 +                MX6QDL_PAD_EIM_D24__UART3_TX_DATA PIN_INPUT_PULLUP /* eim_d24.uart3_tx_data */
 +            >;
 +        };
 +
++        uart4_default: uart4grp {
++            fsl,pins = <
++		MX6QDL_PAD_CSI0_DAT17__UART4_CTS_B PIN_INPUT_PULLUP
++		MX6QDL_PAD_CSI0_DAT16__UART4_RTS_B PIN_INPUT_PULLUP
++                MX6QDL_PAD_CSI0_DAT13__UART4_RX_DATA PIN_INPUT_PULLUP
++                MX6QDL_PAD_CSI0_DAT12__UART4_TX_DATA PIN_INPUT_PULLUP
++            >;
++        };
++
++        pcie_default: pciegrp {
++            fsl,pins = <
++		MX6QDL_PAD_EIM_D18__GPIO3_IO18 0x13059
++		MX6QDL_PAD_EIM_D16__GPIO3_IO16 0x1f059
++            >;
++        };
++        
 +        uart1_default: uart1grp {
 +            fsl,pins = <
++                MX6QDL_PAD_SD3_DAT0__UART1_CTS_B PIN_INPUT_PULLUP 
++                MX6QDL_PAD_SD3_DAT1__UART1_RTS_B PIN_INPUT_PULLUP
 +                MX6QDL_PAD_SD3_DAT6__UART1_RX_DATA PIN_INPUT_PULLUP /* sd3_dat6.uart1_rx_data */
 +                MX6QDL_PAD_SD3_DAT7__UART1_TX_DATA PIN_INPUT_PULLUP /* sd3_dat7.uart1_tx_data */
 +            >;
@@ -836,248 +925,20 @@ index 0000000..dd8fb6a
 +        
 +        i2c1_default: i2c1grp {
 +            fsl,pins = <
-+                MX6QDL_PAD_EIM_D21__I2C1_SCL PIN_OUTPUT_PULLUP /* eim_d21.i2c1_scl */
-+                MX6QDL_PAD_EIM_D28__I2C1_SDA PIN_OUTPUT_PULLUP /* eim_d28.i2c1_sda */
-+                MX6QDL_PAD_DI0_DISP_CLK__GPIO4_IO16 PIN_INPUT /* di0_disp_clk.gpio4_io16 */
++                MX6QDL_PAD_CSI0_DAT8__I2C1_SDA PIN_OUTPUT_PULLUP
++                MX6QDL_PAD_CSI0_DAT9__I2C1_SCL PIN_OUTPUT_PULLUP
++            >;
++        };
++
++        ov5640_default: ov5640grp {
++            fsl,pins = <
++        		MX6QDL_PAD_ENET_TXD0__GPIO1_IO30 PIN_OUTPUT_PULLUP
++        		MX6QDL_PAD_ENET_TXD1__GPIO1_IO29 PIN_OUTPUT_PULLUP
++        		MX6QDL_PAD_GPIO_3__XTALOSC_REF_CLK_24M PIN_OUTPUT
 +            >;
 +        };
 +    };
 +};
-diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
-index a4054f3..ac0a733 100644
---- a/sound/soc/fsl/Kconfig
-+++ b/sound/soc/fsl/Kconfig
-@@ -355,6 +355,19 @@ config SND_SOC_IMX_MC13783
- 	select SND_SOC_MC13783
- 	select SND_SOC_IMX_PCM_DMA
- 
-+config SND_SOC_IMX_TLV320AIC3X
-+	tristate "SoC Audio support for i.MX6 boards with tlv320aic3x audio codec"
-+	depends on OF && I2C
-+	select SND_SOC_TLV320AIC3X
-+	select SND_SOC_IMX_PCM_DMA
-+	select SND_SOC_IMX_AUDMUX
-+	select SND_SOC_FSL_SSI
-+	help
-+		SoC audio for i.MX6 boards with codec TLV320AIC3x attached over
-+		SSI interface.
-+		Say Y if you want to add support for SoC audio on phyFLEX-i.MX6
-+		boards.
-+
- config SND_SOC_FSL_ASOC_CARD
- 	tristate "Generic ASoC Sound Card with ASRC support"
- 	depends on OF && I2C
-diff --git a/sound/soc/fsl/Makefile b/sound/soc/fsl/Makefile
-index 207c669..e419337 100644
---- a/sound/soc/fsl/Makefile
-+++ b/sound/soc/fsl/Makefile
-@@ -64,6 +64,7 @@ snd-soc-imx-wm8962-objs := imx-wm8962.o
- snd-soc-imx-sii902x-objs := imx-sii902x.o
- snd-soc-imx-spdif-objs := imx-spdif.o
- snd-soc-imx-mc13783-objs := imx-mc13783.o
-+snd-soc-imx-tlv320aic3x-objs := imx-tlv320aic3x.o
- snd-soc-imx-mqs-objs := imx-mqs.o
- snd-soc-imx-si476x-objs := imx-si476x.o
- snd-soc-imx-hdmi-objs := imx-hdmi.o
-@@ -81,6 +82,7 @@ obj-$(CONFIG_SND_SOC_IMX_WM8962) += snd-soc-imx-wm8962.o
- obj-$(CONFIG_SND_SOC_IMX_SII902X) += snd-soc-imx-sii902x.o
- obj-$(CONFIG_SND_SOC_IMX_SPDIF) += snd-soc-imx-spdif.o
- obj-$(CONFIG_SND_SOC_IMX_MC13783) += snd-soc-imx-mc13783.o
-+obj-$(CONFIG_SND_SOC_IMX_TLV320AIC3X) += snd-soc-imx-tlv320aic3x.o
- obj-$(CONFIG_SND_SOC_IMX_MQS) += snd-soc-imx-mqs.o
- obj-$(CONFIG_SND_SOC_IMX_SI476X) += snd-soc-imx-si476x.o
- obj-$(CONFIG_SND_SOC_IMX_HDMI) += snd-soc-imx-hdmi.o
-diff --git a/sound/soc/fsl/imx-tlv320aic3x.c b/sound/soc/fsl/imx-tlv320aic3x.c
-new file mode 100644
-index 0000000..e14bcc1
---- /dev/null
-+++ b/sound/soc/fsl/imx-tlv320aic3x.c
-@@ -0,0 +1,186 @@
-+/*
-+ * Copyright 2014 Dmitry Lavnikevich,
-+ * SaM Solutions <d.lavnikevich@sam-solutions.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/i2c.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+
-+#include "../codecs/tlv320aic3x.h"
-+#include "imx-audmux.h"
-+#include "imx-ssi.h"
-+
-+#define CODEC_CLOCK 12000000
-+
-+
-+/* machine dapm widgets */
-+static const struct snd_soc_dapm_widget aic3x_dapm_widgets[] = {
-+	SND_SOC_DAPM_LINE("Line Out", NULL),
-+	SND_SOC_DAPM_LINE("Speaker", NULL),
-+	SND_SOC_DAPM_HP("Headphone Jack", NULL),
-+	SND_SOC_DAPM_MIC("Mic Jack", NULL),
-+	SND_SOC_DAPM_LINE("Line In", NULL),
-+};
-+
-+static int imx_audmux_config(int int_port, int ext_port)
-+{
-+	unsigned int ptcr, pdcr;
-+
-+	int_port--;
-+	ext_port--;
-+	ptcr = IMX_AUDMUX_V2_PTCR_TFSDIR |
-+		IMX_AUDMUX_V2_PTCR_TFSEL(ext_port) |
-+		IMX_AUDMUX_V2_PTCR_TCLKDIR |
-+		IMX_AUDMUX_V2_PTCR_TCSEL(ext_port);
-+	pdcr = IMX_AUDMUX_V2_PDCR_RXDSEL(ext_port);
-+	imx_audmux_v2_configure_port(int_port, ptcr, pdcr);
-+
-+	ptcr = 0;
-+	pdcr = IMX_AUDMUX_V2_PDCR_RXDSEL(int_port);
-+	imx_audmux_v2_configure_port(ext_port, ptcr, pdcr);
-+
-+	return 0;
-+}
-+
-+/* Logic for a aic3x as connected on a imx */
-+static int imx_aic3x_init(struct snd_soc_pcm_runtime *rtd)
-+{
-+//	struct device_node *np = rtd->dev.of_node;
-+	int ret;
-+	int clock = CODEC_CLOCK; // fix later
-+//	struct device *dv = rtd->dev;
-+//	struct device dv2 = *dv;
-+	//ret = of_property_read_u32(dv2.of_node, "clock-frequency", &clock);
-+	//printk("rtd device ... ret=%d, clock=%d\n", rtd->dev, clock);
-+//	printk("rtd_dev = %d, rtd_dev_ = %d\n", (int)dv, (int)(&dv2));
-+	ret = snd_soc_dai_set_sysclk(rtd->codec_dai, 0, clock,
-+		SND_SOC_CLOCK_IN);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static struct snd_soc_dai_link imx_tlv320_dai = {
-+	.name = "HiFi",
-+	.stream_name = "HiFi",
-+	.codec_dai_name = "tlv320aic3x-hifi",
-+	.init = &imx_aic3x_init,
-+	.dai_fmt = SND_SOC_DAIFMT_I2S |
-+		SND_SOC_DAIFMT_NB_NF |
-+		SND_SOC_DAIFMT_CBM_CFM,
-+};
-+
-+static struct snd_soc_card imx_tlv320_card = {
-+	.num_links = 1,
-+	.owner = THIS_MODULE,
-+	.dai_link = &imx_tlv320_dai,
-+	.dapm_widgets = aic3x_dapm_widgets,
-+	.num_dapm_widgets = ARRAY_SIZE(aic3x_dapm_widgets),
-+};
-+
-+static int imx_tlv320_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct device_node *ssi_np, *codec_np;
-+	struct platform_device *ssi_pdev;
-+	struct i2c_client *codec_dev;
-+	int int_port, ext_port;
-+	int ret = 0;
-+
-+	//printk("TLV driver, tlv, snd, test\n");
-+
-+	//printk("test = %d\n", (int)(&(pdev->dev)));
-+	ret = of_property_read_u32(np, "mux-int-port", &int_port);
-+	if (ret) {
-+		dev_err(&pdev->dev, "mux-int-port missing or invalid\n");
-+		return ret;
-+	}
-+	ret = of_property_read_u32(np, "mux-ext-port", &ext_port);
-+	if (ret) {
-+		dev_err(&pdev->dev, "mux-ext-port missing or invalid\n");
-+		return ret;
-+	}
-+
-+	imx_audmux_config(int_port, ext_port);
-+
-+	ssi_np = of_parse_phandle(pdev->dev.of_node, "ssi-controller", 0);
-+	codec_np = of_parse_phandle(pdev->dev.of_node, "audio-codec", 0);
-+	if (!ssi_np || !codec_np) {
-+		dev_err(&pdev->dev, "phandle missing or invalid\n");
-+		ret = -EINVAL;
-+		goto fail;
-+	}
-+
-+	ssi_pdev = of_find_device_by_node(ssi_np);
-+	if (!ssi_pdev) {
-+		dev_err(&pdev->dev, "failed to find SSI platform device\n");
-+		ret = -EPROBE_DEFER;
-+		goto fail;
-+	}
-+	codec_dev = of_find_i2c_device_by_node(codec_np);
-+	if (!codec_dev) {
-+		dev_err(&pdev->dev, "failed to find codec platform device\n");
-+		return -EPROBE_DEFER;
-+	}
-+
-+	imx_tlv320_dai.codec_of_node = codec_np;
-+	imx_tlv320_dai.cpu_of_node = ssi_np;
-+	imx_tlv320_dai.platform_of_node = ssi_np;
-+
-+	imx_tlv320_card.dev = &pdev->dev;
-+	ret = snd_soc_of_parse_card_name(&imx_tlv320_card, "model");
-+	if (ret)
-+		goto fail;
-+	ret = snd_soc_of_parse_audio_routing(&imx_tlv320_card, "audio-routing");
-+	if (ret)
-+		goto fail;
-+
-+	platform_set_drvdata(pdev, &imx_tlv320_card);
-+
-+	ret = devm_snd_soc_register_card(&pdev->dev, &imx_tlv320_card);
-+	if (ret) {
-+		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n", ret);
-+		goto fail;
-+	}
-+
-+	of_node_put(ssi_np);
-+	of_node_put(codec_np);
-+
-+	return 0;
-+
-+fail:
-+	if (ssi_np)
-+		of_node_put(ssi_np);
-+	if (codec_np)
-+		of_node_put(codec_np);
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id imx_tlv320_dt_ids[] = {
-+	{ .compatible = "fsl,imx-audio-tlv320aic3x", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, imx_tlv320_dt_ids);
-+
-+static struct platform_driver imx_tlv320_driver = {
-+	.driver = {
-+		.name = "tlv320aic3x",
-+		.owner = THIS_MODULE,
-+		.pm = &snd_soc_pm_ops,
-+		.of_match_table = imx_tlv320_dt_ids,
-+	},
-+	.probe = imx_tlv320_probe,
-+};
-+module_platform_driver(imx_tlv320_driver);
-+
-+MODULE_AUTHOR("Lavnikevich Dmitry");
-+MODULE_DESCRIPTION("TLV320AIC3X i.MX6 ASoC driver");
-+MODULE_LICENSE("GPL");
 -- 
 2.7.4
+
