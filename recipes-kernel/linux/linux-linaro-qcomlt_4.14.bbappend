@@ -2,6 +2,8 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += " \
     file://0001-Add-IMU-ST-driver-patches-for-SPI.patch \
+    file://0002-Update-gumstix-device-tree-for-ov5640-and-amoled.patch \
+    file://0003-Add-support-for-the-OSD-OSD055A-5.5-MIPI-DSI-AMOLED-.patch \
     file://fragment.cfg \
 "
 
