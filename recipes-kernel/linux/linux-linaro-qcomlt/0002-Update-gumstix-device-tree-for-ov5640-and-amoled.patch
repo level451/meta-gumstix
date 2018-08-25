@@ -1,4 +1,4 @@
-From 8cffc320e53d49c8a720d0ea99abc8d74e2851c6 Mon Sep 17 00:00:00 2001
+ From 8cffc320e53d49c8a720d0ea99abc8d74e2851c6 Mon Sep 17 00:00:00 2001
 From: Jay Zhao <jay.zhao@gumstix.com>
 Date: Wed, 21 Mar 2018 10:43:47 -0700
 Subject: [PATCH] Update gumstix device tree for ov5640 camera and amoled
