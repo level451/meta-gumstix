@@ -6,6 +6,7 @@ SRC_URI += " \
     file://0003-Add-support-for-the-OSD-OSD055A-5.5-MIPI-DSI-AMOLED-.patch \
     file://0004-Touchscreen.patch \
     file://0005-Add-ov5640-support-dragonboard.patch \
+    file://0006-0003-Update-ov5640-driver-more-resolution.patch \
     file://fragment.cfg \
 "
 
