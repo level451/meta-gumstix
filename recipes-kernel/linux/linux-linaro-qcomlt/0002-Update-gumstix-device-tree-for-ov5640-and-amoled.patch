@@ -19,7 +19,7 @@ new file mode 100644
 index 0000000..60157e3
 --- /dev/null
 +++ b/arch/arm64/boot/dts/qcom/gumstix-amoled.dtsi
-@@ -0,0 +1,130 @@
+@@ -0,0 +1,131 @@
 +/*
 + * Copyright (C) 2018 Gumstix, Inc. - https://www.gumstix.com/
 + *
