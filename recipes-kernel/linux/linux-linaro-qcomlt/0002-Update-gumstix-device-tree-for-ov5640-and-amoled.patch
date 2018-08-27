@@ -19,7 +19,7 @@ new file mode 100644
 index 0000000..60157e3
 --- /dev/null
 +++ b/arch/arm64/boot/dts/qcom/gumstix-amoled.dtsi
-@@ -0,0 +1,131 @@
+@@ -0,0 +1,127 @@
 +/*
 + * Copyright (C) 2018 Gumstix, Inc. - https://www.gumstix.com/
 + *
@@ -83,11 +83,7 @@ index 0000000..60157e3
 +
 +		// Use GPIO32 to mux dis0 to High Speed Connector instead of the HDMI bridge
 +		pinctrl-names = "default";
-+		pinctrl-0 = <&dsi_out_switch_high>;
-+
-+		// Use GPIO109 to mux dis0 to High Speed Connector On Bottom instead of the HDMI/LVDS bridge Veriscite Board
-+		pinctrl-names = "default1";
-+		pinctrl-0 = <&dsi_select_veriscite_high>;
++		pinctrl-0 = <&dsi_out_switch_high &dsi_select_veriscite_high>;
 +
 +		port {
 +			panel0_in: endpoint {
