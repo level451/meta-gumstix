@@ -12,3 +12,5 @@ do_configure_append () {
     ${S}/scripts/kconfig/merge_config.sh -m -O ${WORKDIR}/build ${WORKDIR}/build/.config ${WORKDIR}/*.cfg
     yes '' | make oldconfig
 }
+
+KERNEL_DEVICETREE = "qcom/gumstix-dragonboard.dtb"
