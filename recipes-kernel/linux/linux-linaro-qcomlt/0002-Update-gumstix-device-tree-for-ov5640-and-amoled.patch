@@ -170,9 +170,9 @@ index 0000000..5b09163
 +
 +/dts-v1/;
 +
-+#include "gumstix-amoled.dtsi"
 +#include "apq8016-sbc.dtsi"
-+
++#include "gumstix-ov5640.dtsi"
++#include "gumstix-amoled.dtsi"
 +
 +/ {
 +	model = "Qualcomm APQ 8016 SBC Dragonboard 410c on Geppetto - AeroCore 2 for DragonBoard 410C";
