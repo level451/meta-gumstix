@@ -68,7 +68,7 @@ index 0000000..60157e3
 +
 +// OSD055A AMOLED DSI display connections
 +&adv_bridge {
-+	status = "disable";
++	status = "ok";
 +};
 +
 +&dsi0 {
