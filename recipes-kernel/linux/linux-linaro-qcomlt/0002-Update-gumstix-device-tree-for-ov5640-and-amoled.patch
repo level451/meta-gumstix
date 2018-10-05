@@ -1,4 +1,4 @@
- From 8cffc320e53d49c8a720d0ea99abc8d74e2851c6 Mon Sep 17 00:00:00 2001
+From 8cffc320e53d49c8a720d0ea99abc8d74e2851c6 Mon Sep 17 00:00:00 2001
 From: Jay Zhao <jay.zhao@gumstix.com>
 Date: Wed, 21 Mar 2018 10:43:47 -0700
 Subject: [PATCH] Update gumstix device tree for ov5640 camera and amoled
@@ -19,7 +19,7 @@ new file mode 100644
 index 0000000..60157e3
 --- /dev/null
 +++ b/arch/arm64/boot/dts/qcom/gumstix-amoled.dtsi
-@@ -0,0 +1,127 @@
+@@ -0,0 +1,116 @@
 +/*
 + * Copyright (C) 2018 Gumstix, Inc. - https://www.gumstix.com/
 + *
@@ -83,7 +83,7 @@ index 0000000..60157e3
 +
 +		// Use GPIO32 to mux dis0 to High Speed Connector instead of the HDMI bridge
 +		pinctrl-names = "default";
-+		pinctrl-0 = <&dsi_out_switch_high &dsi_select_veriscite_high>;
++		pinctrl-0 = <&dsi_out_switch_high>;
 +
 +		port {
 +			panel0_in: endpoint {
@@ -109,17 +109,6 @@ index 0000000..60157e3
 +		};
 +		pinconf {
 +			pins = "gpio32";
-+			drive-strength = <16>;
-+			output-high;
-+		};
-+	};
-+	dsi_select_veriscite_high: dsi_select_veriscite_high {
-+		pinmux {
-+			function = "gpio";
-+			pins = "gpio109";
-+		};
-+		pinconf {
-+			pins = "gpio109";
 +			drive-strength = <16>;
 +			output-high;
 +		};
