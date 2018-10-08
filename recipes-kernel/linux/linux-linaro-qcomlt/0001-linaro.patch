@@ -1,7 +1,7 @@
-diff --git a/arch/arm64/boot/dts/qcom/linaro.dtsi b/arch/arm64/boot/dts/qcom/linaro.dtsi
+diff --git a/arch/arm64/boot/dts/qcom/linaro-sbc.dtsi b/arch/arm64/boot/dts/qcom/linaro-sbc.dtsi
 new file mode 100644
 --- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/linaro.dtsi
++++ b/arch/arm64/boot/dts/qcom/linaro-sbc.dtsi
 @@ -0,0 +1,3466 @@
 + /dts-v1/;
 + 
