@@ -2,9 +2,12 @@
 --- linaro.dtsi	2018-10-08 11:20:23.854040247 -0600
 ***************
 *** 0 ****
---- 1,3466 ----
+--- 1,3469 ----
 + /dts-v1/;
 + 
++ #include <dt-bindings/gpio/gpio.h>
++ #include <dt-bindings/input/input.h>
++ #include <dt-bindings/sound/apq8016-lpass.h>
 + / {
 + 	model = "Qualcomm Technologies, Inc. APQ 8016 SBC";
 + 	compatible = "qcom,apq8016-sbc", "qcom,apq8016", "qcom,sbc";
