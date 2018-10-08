@@ -168,7 +168,7 @@ index 0000000..5b09163
 +
 +/dts-v1/;
 +
-+#include "apq8016-sbc.dtsi"
++#include "linaro.dtsi"
 +#include "gumstix-amoled.dtsi"
 +
 +
