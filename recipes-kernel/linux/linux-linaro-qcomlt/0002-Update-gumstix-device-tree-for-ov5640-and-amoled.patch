@@ -68,7 +68,7 @@ index 0000000..60157e3
 +
 +// OSD055A AMOLED DSI display connections
 +&adv_bridge {
-+	status = "ok";
++	status = "disable";
 +};
 +
 +&dsi0 {
@@ -173,7 +173,7 @@ index 0000000..5b09163
 +
 +
 +/ {
-+	model = "Qualcomm APQ 8016 SBC Dragonboard 410c on Geppetto - AeroCore 2 for DragonBoard 410C";
++	model = "Hail Marry - Steve&Todd linaro dts with screen patch ";
 +	compatible = "qcom,apq8016-sbc", "qcom,apq8016", "qcom,sbc";
 +};
 -- 
