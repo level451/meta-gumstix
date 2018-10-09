@@ -1,0 +1,5 @@
+@@ -305,7 +305,7 @@
+					sound-dai = <&lpass MI2S_QUATERNARY>;
+				};
+				codec {
+					sound-dai = <&lpass_codec 0>, <&wcd_codec 0>;
