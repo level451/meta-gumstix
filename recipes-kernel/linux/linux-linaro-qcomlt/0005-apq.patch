@@ -1,3 +1,7 @@
+diff --git a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
+
+--- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
 @@ -305,7 +305,7 @@
  					sound-dai = <&lpass MI2S_QUATERNARY>;
  				};
