@@ -1,3 +1,5 @@
+Changed by Todd.  MUST USE SUMO BRANCH!
+
 Yocto BSP layer for Gumstix products. 
 
 This repository is developed in the environment provided by the
