@@ -18,7 +18,7 @@ index 0000000..d492e49
 --- /dev/null
 +++ b/Documentation/devicetree/bindings/display/panel/osd,osd055a.txt
 @@ -0,0 +1,26 @@
-+OSD OSD055A 5.5" 720p MIPI-DSI AMOLED panel
++OSD OSD055A 5.5" 1080p MIPI-DSI AMOLED panel
 +
 +The OSD Devices OSD055A is a 5.5" 1080x1920 AMOLED
 +panel connected using a MIPI-DSI video interface.
