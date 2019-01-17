@@ -54,7 +54,7 @@ index 0000000..60157e3
 +	gt1151@14 {
 +		status = "ok";
 +		compatible = "goodix,gt1151";
-+		reg = <0x14>;
++		reg = <0x38>;
 +		interrupt-parent = <&msmgpio>;
 +		interrupts = <25 0>;
 +
