@@ -20,7 +20,7 @@ index 0000000..d492e49
 @@ -0,0 +1,26 @@
 +OSD OSD055A 5.5" 720p MIPI-DSI AMOLED panel
 +
-+The OSD Devices OSD055A is a 5.5" 720x1280 AMOLED
++The OSD Devices OSD055A is a 5.5" 1080x1920 AMOLED
 +panel connected using a MIPI-DSI video interface.
 +
 +Required properties:
@@ -53,12 +53,12 @@ index 62aba97..2129514 100644
  	  (540x960) DSI panel as found on the Qualcomm APQ8074 Dragonboard
  
 +config DRM_PANEL_OSD_OSD055A
-+	tristate "OSD Displays OSD055A 720x1280 DSI 4dl video mode panel"
++	tristate "OSD Displays OSD055A 1080x1920 DSI 4dl video mode panel"
 +	depends on OF
 +	depends on DRM_MIPI_DSI
 +	help
 +	  Say Y here if you want to enable support for OSD OSD055A
-+	  720x1280 dsi 4dl video mode panel
++	  1080x1920 dsi 4dl video mode panel
 +
  endmenu
 diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
@@ -111,8 +111,8 @@ index 0000000..d3a564b
 +static const struct drm_display_mode default_mode = {
 +	.clock = 52582,
 +	.hdisplay = 1080,
-+	.hsync_start = 720 + 38,
-+	.hsync_end = 720 + 38 + 8,
++	.hsync_start = 1080 + 38,
++	.hsync_end = 1080 + 38 + 8,
 +	.htotal = 1080 + 38 + 8 + 38,
 +	.vdisplay = 1920,
 +	.vsync_start = 1920 + 18,
